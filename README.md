@@ -8,6 +8,6 @@ xls-tools provide... well... **tools** to work on xls (and so on) files.
 
 1. Parse two spreadsheets to look for occurences
 
-2. Parse a spreadsheet to format phonenumbers (in progresse)
+2. Parse a spreadsheet to format phonenumbers (in progress)
 
 3. ...
