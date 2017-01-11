@@ -1,0 +1,4 @@
+pyexcel==0.4.1
+pyexcel-ods==0.3.0
+pyexcel-xls==0.3.0
+pyexcel-xlsx==0.3.0
