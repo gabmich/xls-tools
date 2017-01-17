@@ -1,5 +1,7 @@
 /env
 /app/__pycache__
+/build
+/dist
 *.pyc
 *.DS_Store
 *.xls
