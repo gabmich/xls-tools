@@ -1,8 +1,10 @@
 # coding: utf-8
 
 import tkinter as tk
-from app.XlsDuplicateParser.gui import XlsDuplicateParserGUI as xdgui
 from app.XlsDuplicateParser.controller import XlsDuplicateParser as xd
+from app.XlsDuplicateParser.gui import XlsDuplicateParserGUI as xdgui
+from app.XlsPhonenumbersParser.controller import XlsPhonenumbersParser as xp
+from app.XlsPhonenumbersParser.gui import XlsPhonenumbersParserGUI as xpui
 from app.editors import PhonenumberParserGUI as pp
 
 root = tk.Tk()
@@ -20,7 +22,7 @@ class Launcher():
         self.add_button({
             'text': 'XLS Phonenumbers Editor',
             'width': 25,
-            'command': lambda: self.open_app(pp)
+            'command': lambda: self.open_app(xpui)
         })
         self.add_button({
             'text': 'QUIT',

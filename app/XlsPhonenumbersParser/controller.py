@@ -8,6 +8,7 @@ class XlsPhonenumbersParser():
 
     def __init__(self):
         self.sheets = []
+        self.new_sheets = []
 
     def add_file(self, file_name):
         self.sheets.append(file_name)
@@ -16,23 +17,38 @@ class XlsPhonenumbersParser():
         for sheet in self.sheets:
             self.parse_file(sheet)
 
+    def remove_swisscom_shit(self, cell):
+        if cell[0:3] == '120':
+            cell = cell[3:]
+        elif cell[0:2] == '12':
+            cell = cell[2:]
+        return cell
+
     def parse_file(self, sheet_name):
         sheet = p.get_sheet(file_name=sheet_name)
+        numbers_modified = []
 
         for i, row in enumerate(sheet):
             for c, cell in enumerate(row):
                 cell = str(cell)
-                if pn.is_possible_number_string(cell, "CH"):
+                raw_cell = cell
+                cell = self.remove_swisscom_shit(cell)
+                if pn.is_possible_number_string(cell, 'CH'):
                     raw_number = pn.parse(cell, 'CH')
-                    formated_number = pn.format_number(raw_number, pn.PhoneNumberFormat.E164)
-                    sheet.cell_value(i, c, new_value=formated_number)
+                    if pn.is_valid_number(raw_number):
+                        formated_number = pn.format_number(raw_number, pn.PhoneNumberFormat.E164)[1:]
+                        sheet.cell_value(i, c, new_value=formated_number)
+                        numbers_modified.append({'old': raw_cell, 'new': formated_number})
+
         a = sheet_name.split('.')
-        a.pop()
+        ext = a.pop()
         new_sheet_name = ''.join(a)
+        new_sheet_name = '{}_parsed.{}'.format(new_sheet_name, ext)
 
-        sheet.save_as('{}_parsed.xlsx'.format(new_sheet_name))
-
-x = XlsPhonenumbersParser()
-x.add_file('a1.xlsx')
-x.add_file('fichier1.xlsx')
-x.parse()
+        sheet.save_as(new_sheet_name)
+        self.new_sheets.append(
+            {
+                'name': new_sheet_name,
+                'numbers_modified': numbers_modified
+            }
+        )

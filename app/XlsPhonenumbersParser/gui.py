@@ -10,7 +10,7 @@ from tkinter.filedialog import *
 from app.XlsPhonenumbersParser.controller import XlsPhonenumbersParser
 
 
-class XlsPhonenumbersParser():
+class XlsPhonenumbersParserGUI():
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(self.master)
@@ -47,16 +47,16 @@ class XlsPhonenumbersParser():
             font=self.customFont,
             command=lambda: self.add_file()
         )
-        self.add_file_button.grid(row=0, column=0, columnspan=2)
+        self.add_file_button.grid(row=0, column=0)
 
         self.analyze_button = tk.Button(
             self.frame,
-            text='FIND OCCURENCES',
+            text='PARSE FILES',
             width=30,
             font=self.customFont,
-            command=lambda: self.analyze()
+            command=lambda: self.parse_files()
         )
-        self.analyze_button.grid(row=1, column=0, columnspan=2)
+        self.analyze_button.grid(row=1, column=0)
 
         self.clear_files_button = tk.Button(
             self.frame,
@@ -65,7 +65,7 @@ class XlsPhonenumbersParser():
             font=self.customFont,
             command=lambda: self.clear_files()
         )
-        self.clear_files_button.grid(row=0, column=3, columnspan=2)
+        self.clear_files_button.grid(row=0, column=1)
 
         self.close_button = tk.Button(
             self.frame,
@@ -74,22 +74,22 @@ class XlsPhonenumbersParser():
             font=self.customFont,
             command=lambda: self.close_windows()
         )
-        self.close_button.grid(row=1, column=3, columnspan=2)
+        self.close_button.grid(row=1, column=1)
 
     def init_labels(self):
         self.label1 = tk.Label(
             self.frame,
-            text='Fichiers sélectionnés',
+            text='Files to parse',
             font=self.customFont
         )
         self.label1.grid(row=2, column=0, sticky=W)
 
         self.label2 = tk.Label(
             self.frame,
-            text='Occurences trouvées',
+            text='Files parsed',
             font=self.customFont
         )
-        self.label2.grid(row=2, column=3, sticky=W)
+        self.label2.grid(row=2, column=1, sticky=W)
 
     def init_files_field(self):
         self.files_field = tk.Text(
@@ -99,7 +99,7 @@ class XlsPhonenumbersParser():
             pady=10,
             font=self.customFont
         )
-        self.files_field.grid(row=3, column=0, columnspan=2)
+        self.files_field.grid(row=3, column=0)
 
     def init_output(self):
         self.out = tk.Text(
@@ -109,7 +109,9 @@ class XlsPhonenumbersParser():
             pady=10,
             font=self.customFont
         )
-        self.out.grid(row=3, column=3, columnspan=2)
+        self.out.tag_add("start", "1.8", "1.13")
+        self.out.tag_config("start", background="black", foreground="yellow")
+        self.out.grid(row=3, column=1)
 
     def add_file(self):
         file_name = askopenfilename(
@@ -121,11 +123,12 @@ class XlsPhonenumbersParser():
             ]
         )
         if file_name:
-            self.controller.add_sheet_to_compare(file_name)
+            self.controller.add_file(file_name)
             self.files_field.insert('end', '{}\n'.format(file_name))
 
     def clear_files(self):
-        del self.controller.sheets_to_compare[:]
+        del self.controller.sheets[:]
+        del self.controller.new_sheets[:]
         self.out.delete(1.0, 'end')
         self.files_field.delete(1.0, 'end')
 
@@ -133,10 +136,19 @@ class XlsPhonenumbersParser():
         """ Close an app window """
         self.master.destroy()
 
-    def analyze(self):
+    def parse_files(self):
         self.out.delete(1.0, 'end')
-        result = self.controller.browse_rows_multiple_files(
-            self.controller.sheets_to_compare
-        )
-        for r in result:
-            self.out.insert('end', 'MATCH : {}\n'.format(r))
+        result = self.controller.parse()
+        modified_numbers_list = []
+
+        for sheet in self.controller.new_sheets:
+            self.out.insert('end', '{}\n'.format(sheet['name']))
+            for numbers in sheet['numbers_modified']:
+                if numbers['old'] != numbers['new'] and numbers['old'] not in modified_numbers_list:
+                    self.out.insert('end', '*** {} ===> {}\n'.format(numbers['old'], numbers['new']))
+                    modified_numbers_list.append(numbers['old'])
+
+
+
+
+
