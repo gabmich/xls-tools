@@ -2,7 +2,7 @@ from distutils.core import setup
 import py2exe
  
 setup(
-    console=['xls-tools.py'],
+    console=['launcher.py'],
     options = {
         'py2exe': {
             'packages': [

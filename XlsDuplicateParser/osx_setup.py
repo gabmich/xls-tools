@@ -7,7 +7,7 @@ Usage:
 
 from setuptools import setup
 
-APP = ['xls-tools.py']
+APP = ['launcher.py']
 DATA_FILES = []
 OPTIONS = {
             'argv_emulation': False,

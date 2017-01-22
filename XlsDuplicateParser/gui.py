@@ -1,20 +1,20 @@
 # coding: utf-8
 
 import tkinter as tk
-import subprocess as sub
-import pyexcel as p
-from tkinter import font
+from tkinter import *
 from tkinter.messagebox import *
 from tkinter.filedialog import *
-
-from app.XlsDuplicateParser.controller import XlsDuplicateParser
+import subprocess as sub
+from tkinter import font
+from controller import XlsDuplicateParser
 
 
 class XlsDuplicateParserGUI():
-    def __init__(self, master):
-        self.master = master
-        self.frame = tk.Frame(self.master)
-        self.frame.configure(padx=20, pady=10, width=50)
+    def __init__(self, root):
+        self.root = root
+        self.frame=Frame(root)
+        self.frame.configure(padx=20, pady=10)
+
         self.controller = XlsDuplicateParser()
         self.customFont = font.Font(family="Helvetica", size=20)
 
@@ -24,7 +24,7 @@ class XlsDuplicateParserGUI():
         self.init_files_field()
         self.init_output()
 
-        self.frame.grid(row=0, column=10, sticky=N+S+E+W)
+        self.frame.grid(row=0, column=0, sticky=N+S+E+W)
 
         for row_index in range(20):
             Grid.rowconfigure(self.frame, row_index, weight=1)
@@ -32,26 +32,27 @@ class XlsDuplicateParserGUI():
             Grid.columnconfigure(self.frame, col_index, weight=1)
 
     def init_menu(self):
-        self.menubar = Menu(self.master)
+        self.menubar = Menu(self.root)
         self.menu1 = Menu(self.menubar, tearoff=0)
         self.menu1.add_command(
             label="Add file to compare",
             command=lambda: self.add_file()
         )
         self.menu1.add_separator()
-        self.menu1.add_command(label="Quitter", command=self.master.quit)
+        self.menu1.add_command(label="Quitter", command=self.root.quit)
         self.menubar.add_cascade(label="Fichier", menu=self.menu1)
-        self.master.config(menu=self.menubar)
+        self.root.config(menu=self.menubar)
 
     def init_action_buttons(self):
         self.add_file_button = tk.Button(
             self.frame,
             text='ADD FILE',
+            width=30,
             bg='blue',
             font=self.customFont,
             command=lambda: self.add_file()
         )
-        self.add_file_button.grid(row=0, column=0, sticky=N+S+E+W)
+        self.add_file_button.grid(row=0, column=0, columnspan=2)
 
         self.analyze_button = tk.Button(
             self.frame,
@@ -69,7 +70,7 @@ class XlsDuplicateParserGUI():
             font=self.customFont,
             command=lambda: self.clear_files()
         )
-        self.clear_files_button.grid(row=0, column=3, columnspan=2)
+        self.clear_files_button.grid(row=0, column=2, columnspan=2)
 
         self.close_button = tk.Button(
             self.frame,
@@ -78,7 +79,7 @@ class XlsDuplicateParserGUI():
             font=self.customFont,
             command=lambda: self.close_windows()
         )
-        self.close_button.grid(row=1, column=3, columnspan=2)
+        self.close_button.grid(row=1, column=2, columnspan=2)
 
     def init_labels(self):
         self.label1 = tk.Label(
@@ -135,7 +136,7 @@ class XlsDuplicateParserGUI():
 
     def close_windows(self):
         """ Close an app window """
-        self.master.destroy()
+        self.root.destroy()
 
     def analyze(self):
         self.out.delete(1.0, 'end')

@@ -43,7 +43,6 @@ class XlsPhonenumbersParserGUI():
             self.frame,
             text='ADD FILE',
             width=30,
-            bg='blue',
             font=self.customFont,
             command=lambda: self.add_file()
         )
@@ -97,7 +96,9 @@ class XlsPhonenumbersParserGUI():
             bg='grey',
             padx=10,
             pady=10,
-            font=self.customFont
+            font=self.customFont,
+            width=50,
+            height=10
         )
         self.files_field.grid(row=3, column=0)
 
@@ -107,11 +108,11 @@ class XlsPhonenumbersParserGUI():
             bg='grey',
             padx=10,
             pady=10,
-            font=self.customFont
+            font=self.customFont,
+            width=50,
+            height=10
         )
-        self.out.tag_add("start", "1.8", "1.13")
-        self.out.tag_config("start", background="black", foreground="yellow")
-        self.out.grid(row=3, column=1)
+        self.out.grid(row=4, column=0)
 
     def add_file(self):
         file_name = askopenfilename(
