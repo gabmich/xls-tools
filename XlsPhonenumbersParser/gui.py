@@ -24,10 +24,11 @@ class XlsPhonenumbersParserGUI():
         self.init_files_field()
         self.init_output()
 
-        self.frame.grid(row=0, column=0, sticky=N+S+E+W)
+        self.frame.grid()
 
-        for row_index in range(20):
+        for row_index in range(0, 6):
             Grid.rowconfigure(self.frame, row_index, weight=1)
+
         for col_index in range(20):
             Grid.columnconfigure(self.frame, col_index, weight=1)
 
@@ -35,7 +36,7 @@ class XlsPhonenumbersParserGUI():
         self.menubar = Menu(self.root)
         self.menu1 = Menu(self.menubar, tearoff=0)
         self.menu1.add_command(
-            label="Add file to compare",
+            label="Add file(s) to compare",
             command=lambda: self.add_file()
         )
         self.menu1.add_separator()
@@ -46,7 +47,7 @@ class XlsPhonenumbersParserGUI():
     def init_action_buttons(self):
         self.add_file_button = tk.Button(
             self.frame,
-            text='ADD FILE',
+            text='ADD FILE(S)',
             width=30,
             font=self.customFont,
             command=lambda: self.add_file()
@@ -93,7 +94,7 @@ class XlsPhonenumbersParserGUI():
             text='Files parsed',
             font=self.customFont
         )
-        self.label2.grid(row=2, column=1, sticky=W)
+        self.label2.grid(row=4, column=0, sticky=W)
 
     def init_files_field(self):
         self.files_field = tk.Text(
@@ -103,9 +104,9 @@ class XlsPhonenumbersParserGUI():
             pady=10,
             font=self.customFont,
             width=50,
-            height=10
+            height=5
         )
-        self.files_field.grid(row=3, column=0)
+        self.files_field.grid(row=3, column=0, columnspan=2, sticky=W+E)
 
     def init_output(self):
         self.out = tk.Text(
@@ -115,22 +116,24 @@ class XlsPhonenumbersParserGUI():
             pady=10,
             font=self.customFont,
             width=50,
-            height=10
+            height=15
         )
-        self.out.grid(row=4, column=0)
+        self.out.grid(row=5, column=0, columnspan=2, sticky=W+E)
 
     def add_file(self):
-        file_name = askopenfilename(
+        files = askopenfilenames(
             title='Choose a file to parse',
             filetypes=[
                 ('xls files', '.xls'),
                 ('xlsx files', '.xlsx'),
+                ('ods files', '.ods'),
                 ('all files', '.*')
             ]
         )
-        if file_name:
-            self.controller.add_file(file_name)
-            self.files_field.insert('end', '{}\n'.format(file_name))
+        if files:
+            for f in files:
+                self.controller.add_file(f)
+                self.files_field.insert('end', '{}\n'.format(f))
 
     def clear_files(self):
         del self.controller.sheets[:]

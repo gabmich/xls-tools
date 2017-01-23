@@ -4,6 +4,8 @@ import pyexcel as p
 import phonenumbers as pn
 import types
 import datetime
+import os
+
 
 def date_to_format(value, target_format):
     """Convert date to specified format"""
@@ -40,18 +42,25 @@ class XlsPhonenumbersParser():
         return cell
 
     def parse_file(self, sheet_name):
+        file_name, file_extension = os.path.splitext(sheet_name)
+        library = "pyexcel-{}".format(file_extension[1:])
+
         sheet = p.get_sheet(file_name=sheet_name)
         numbers_modified = []
 
         for i, row in enumerate(sheet):
             for c, cell in enumerate(row):
-                cell = self.remove_swisscom_shit(str(cell))
-                if pn.is_possible_number_string(str(cell), 'CH'):
-                    raw_number = pn.parse(str(cell), 'CH')
-                    if pn.is_valid_number(raw_number):
-                        formated_number = pn.format_number(raw_number, pn.PhoneNumberFormat.E164)[1:]
-                        sheet.cell_value(i, c, new_value=formated_number)
-                        numbers_modified.append({'old': cell, 'new': formated_number})
+                if isinstance(cell, str) or isinstance(cell, int):
+                    cell = self.remove_swisscom_shit(str(cell))
+                    if pn.is_possible_number_string(str(cell), 'CH'):
+                        raw_number = pn.parse(str(cell), 'CH')
+                        if pn.is_valid_number(raw_number):
+                            formated_number = pn.format_number(raw_number, pn.PhoneNumberFormat.E164)[1:]
+                            sheet.cell_value(i, c, new_value=formated_number)
+                            numbers_modified.append({'old': cell, 'new': formated_number})
+                elif isinstance(cell, datetime.date):
+                    d = cell.strftime(u'%d/%m/%Y %H:%M:%S')
+                    sheet.cell_value(i, c, new_value=d)
 
         a = sheet_name.split('.')
         ext = a.pop()

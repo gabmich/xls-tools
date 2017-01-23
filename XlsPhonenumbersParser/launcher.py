@@ -12,4 +12,7 @@ Grid.rowconfigure(root, 0, weight=1)
 Grid.columnconfigure(root, 0, weight=1)
 XlsPhonenumbersParserGUI(root)
 
+root.update()
+root.minsize(root.winfo_width(), root.winfo_height())
+
 root.mainloop()

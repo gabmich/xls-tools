@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import pyexcel as p
+import os
 
 
 class XlsDuplicateParser():
@@ -22,7 +23,10 @@ class XlsDuplicateParser():
         sets = []
     
         for f in files:
-            sheet = p.get_sheet(file_name=f)
+            file_name, file_extension = os.path.splitext(f)
+            library = "pyexcel-{}".format(file_extension[1:])
+            
+            sheet = p.get_sheet(file_name=f, library=library)
             sets.append(set(elt for row in sheet for elt in row))
     
         result = set.intersection(*sets) - {'', None}
