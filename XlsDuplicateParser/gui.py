@@ -49,7 +49,6 @@ class XlsDuplicateParserGUI():
             self.frame,
             text='ADD FILE(S)',
             width=30,
-            bg='blue',
             font=self.customFont,
             command=lambda: self.add_file()
         )
