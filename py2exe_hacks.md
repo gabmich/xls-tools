@@ -1,4 +1,4 @@
-For compiling the two apps with py2exe, I had to trick a little bit :
+For compiling the app with py2exe, I had to trick a little bit :
 
 1. Edit a file in your python venv/lib/openpyxl/__init__.py (on windows, venv/Lib/site-packages/openpyxl/__init__.py) - this modification is necessary for compiling with py2app for osx too
 
