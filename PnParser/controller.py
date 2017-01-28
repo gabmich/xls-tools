@@ -6,32 +6,17 @@ import types
 import datetime
 import os
 
-
-def date_to_format(value, target_format):
-    """Convert date to specified format"""
-    if target_format == str:
-        if isinstance(value, datetime.date):
-            ret = value.strftime("%d/%m/%y")
-        elif isinstance(value, datetime.datetime):
-            ret = value.strftime("%d/%m/%y")
-        elif isinstance(value, datetime.time):
-            ret = value.strftime("%H:%M:%S")
-    else:
-        ret = value
-    return ret
-
-
-class XlsPhonenumbersParser():
+class PnParser():
 
     def __init__(self):
-        self.sheets = []
-        self.new_sheets = []
+        self.sheets_to_parse    = []
+        self.sheets_parsed      = []
 
-    def add_file(self, file_name):
-        self.sheets.append(file_name)
+    def add_sheet_to_parse(self, sheet_name):
+        self.sheets_to_parse.append(sheet_name)
 
     def parse(self):
-        for sheet in self.sheets:
+        for sheet in self.sheets_to_parse:
             self.parse_file(sheet)
 
     def remove_swisscom_shit(self, cell):
@@ -68,9 +53,23 @@ class XlsPhonenumbersParser():
         new_sheet_name = '{}_parsed.{}'.format(new_sheet_name, ext)
 
         sheet.save_as(new_sheet_name)
-        self.new_sheets.append(
+        self.sheets_parsed.append(
             {
                 'name': new_sheet_name,
                 'numbers_modified': numbers_modified
             }
         )
+        sheet = None
+
+    def browse(self, files):
+        sets = []
+    
+        for f in files:
+            file_name, file_extension = os.path.splitext(f)
+            library = "pyexcel-{}".format(file_extension[1:])
+            
+            sheet = p.get_sheet(file_name=f, library=library)
+            sets.append(set(elt for row in sheet for elt in row if pn.is_possible_number_string(str(elt), 'CH')))
+    
+        result = set.intersection(*sets) - {'', None}
+        return result
