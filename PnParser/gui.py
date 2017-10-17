@@ -157,5 +157,8 @@ class PnParserGUI():
         result = self.controller.browse(
             self.controller.sheets_to_parse
         )
-        for r in result:
-            self.out.insert('end', 'MATCH : {}\n'.format(r))
+        if result:
+            for r in result:
+                self.out.insert('end', 'MATCH : {}\n'.format(r))
+        else:
+            self.out.insert('end', self.controller.sheets_to_parse)

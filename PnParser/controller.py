@@ -67,9 +67,9 @@ class PnParser():
         for f in files:
             file_name, file_extension = os.path.splitext(f)
             library = "pyexcel-{}".format(file_extension[1:])
-            
+        
             sheet = p.get_sheet(file_name=f, library=library)
-            sets.append(set(elt for row in sheet for elt in row if pn.is_possible_number_string(str(elt), 'CH')))
+            sets.append(set(elt for row in sheet for elt in row))
     
         result = set.intersection(*sets) - {'', None}
         return result
