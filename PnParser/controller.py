@@ -12,6 +12,7 @@ class PnParser():
     def __init__(self):
         self.sheets_to_parse    = []
         self.sheets_parsed      = []
+        self.changes            = None
 
     def add_sheet_to_parse(self, sheet_name):
         self.sheets_to_parse.append(sheet_name)
@@ -58,6 +59,8 @@ class PnParser():
             os.makedirs('{}/xls_tools_output'.format(file_dir_path))
         
         new_sheet_name = '{}/xls_tools_output/{}'.format(file_dir_path, new_file_name_with_ext)
+        self.changes = '{}/xls_tools_output/changes.txt'.format(file_dir_path)
+
 
         sheet.save_as(new_sheet_name)
         self.sheets_parsed.append(

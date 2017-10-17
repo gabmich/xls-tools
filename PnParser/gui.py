@@ -144,13 +144,19 @@ class PnParserGUI():
         self.out.delete(1.0, 'end')
         result = self.controller.parse()
         modified_numbers_list = []
+        changes = open(self.controller.changes, 'w')
 
         for sheet in self.controller.sheets_parsed:
             self.out.insert('end', '{}\n'.format(sheet['name']))
+            changes.write('{}\n'.format(sheet['name']))
+
             for numbers in sheet['numbers_modified']:
                 if numbers['old'] != numbers['new'] and numbers['old'] not in modified_numbers_list:
                     self.out.insert('end', '*** {} ===> {}\n'.format(numbers['old'], numbers['new']))
+                    changes.write('*** {} ===> {}\n'.format(numbers['old'], numbers['new']))
                     modified_numbers_list.append(numbers['old'])
+
+        changes.close()
 
     def compare_files(self):
         self.out.delete(1.0, 'end')
