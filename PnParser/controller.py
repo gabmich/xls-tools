@@ -5,6 +5,7 @@ import phonenumbers as pn
 import types
 import datetime
 import os
+import ntpath
 
 class PnParser():
 
@@ -27,8 +28,14 @@ class PnParser():
         return cell
 
     def parse_file(self, sheet_name):
-        file_name, file_extension = os.path.splitext(sheet_name)
+        f_name, file_extension = os.path.splitext(sheet_name)
         library = "pyexcel-{}".format(file_extension[1:])
+
+        file_dir_path = os.path.dirname(f_name)
+
+        file_dir_path, file_name = ntpath.split(f_name)
+        file_name_with_ext = '{}{}'.format(file_name, file_extension)
+        new_file_name_with_ext = '{}_parsed{}'.format(file_name, file_extension)
 
         sheet = p.get_sheet(file_name=sheet_name)
         numbers_modified = []
@@ -47,10 +54,10 @@ class PnParser():
                     d = cell.strftime(u'%d/%m/%Y %H:%M:%S')
                     sheet.cell_value(i, c, new_value=d)
 
-        a = sheet_name.split('.')
-        ext = a.pop()
-        new_sheet_name = ''.join(a)
-        new_sheet_name = '{}_parsed.{}'.format(new_sheet_name, ext)
+        if not os.path.exists('{}/xls_tools_output'.format(file_dir_path)):
+            os.makedirs('{}/xls_tools_output'.format(file_dir_path))
+        
+        new_sheet_name = '{}/xls_tools_output/{}'.format(file_dir_path, new_file_name_with_ext)
 
         sheet.save_as(new_sheet_name)
         self.sheets_parsed.append(
